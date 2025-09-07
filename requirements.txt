@@ -1,0 +1,9 @@
+flask
+flask-cors
+tensorflow>=2.9
+numpy
+matplotlib
+scipy
+pandas
+scikit-learn
+joblib

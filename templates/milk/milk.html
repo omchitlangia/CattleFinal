@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Milk Quality Prediction</title>
+    <style>
+        body {
+            background-color: #f6f8f3;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 400px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            padding: 30px 40px;
+            box-shadow: 0 2px 14px rgba(130,140,80,.08);
+        }
+        h2 {
+            text-align: center;
+            color: #303e1c;
+        }
+        label, input {
+            display: block;
+            margin: 15px 0 8px 0;
+            font-size: 16px;
+            width: 100%;
+        }
+        button {
+            background-color: #3e561a;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            font-size: 17px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 18px;
+        }
+        .summary, #prediction-output {
+            margin-top: 28px;
+            background: #ecf5e5;
+            border-radius: 7px;
+            padding: 18px 16px;
+            font-size: 16px;
+        }
+        .summary ul {
+            margin: 0 0 4px 0;
+            padding-left: 24px;
+        }
+        .summary li {
+            margin-bottom: 4px;
+        }
+        #prediction-output {
+            font-weight: bold;
+            color: #3e561a;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Milk Quality Prediction</h2>
+        <form id="milk-form">
+            <label>pH Level</label>
+            <input name="ph" type="number" step="0.01" required>
+
+            <label>Temperature (&deg;C)</label>
+            <input name="temperature" type="number" step="0.01" required>
+
+            <label>Taste (0 or 1)</label>
+            <input name="taste" type="number" min="0" max="1" step="1" required>
+
+            <label>Odor (0 or 1)</label>
+            <input name="odor" type="number" min="0" max="1" step="1" required>
+
+            <label>Fat (%) (0 or 1)</label>
+            <input name="fat" type="number" min="0" max="1" step="1" required>
+
+            <label>Turbidity (NTU) (0 or 1)</label>
+            <input name="turbidity" type="number" min="0" max="1" step="1" required>
+
+            <label>Color (245 to 255)</label>
+            <input name="color" type="number" min="245" max="255" step="1" required>
+
+            <button type="submit">Predict Quality</button>
+        </form>
+
+        <div class="summary" id="input-summary">
+            <strong>Input Summary:</strong>
+            <ul>
+                <li><b>pH Level:</b> <span id="sum-ph"></span></li>
+                <li><b>Temperature:</b> <span id="sum-temp"></span></li>
+                <li><b>Taste:</b> <span id="sum-taste"></span></li>
+                <li><b>Odor:</b> <span id="sum-odor"></span></li>
+                <li><b>Fat (%):</b> <span id="sum-fat"></span></li>
+                <li><b>Turbidity (NTU):</b> <span id="sum-turb"></span></li>
+                <li><b>Color:</b> <span id="sum-color"></span></li>
+            </ul>
+        </div>
+        <div id="prediction-output"></div>
+    </div>
+    <script>
+        function updateSummary(data) {
+            document.getElementById("sum-ph").textContent = data.ph;
+            document.getElementById("sum-temp").textContent = data.temperature;
+            document.getElementById("sum-taste").textContent = data.taste;
+            document.getElementById("sum-odor").textContent = data.odor;
+            document.getElementById("sum-fat").textContent = data.fat;
+            document.getElementById("sum-turb").textContent = data.turbidity;
+            document.getElementById("sum-color").textContent = data.color;
+        }
+
+        document.getElementById("milk-form").addEventListener("input", function() {
+            const data = {
+                ph: document.querySelector('[name="ph"]').value,
+                temperature: document.querySelector('[name="temperature"]').value,
+                taste: document.querySelector('[name="taste"]').value,
+                odor: document.querySelector('[name="odor"]').value,
+                fat: document.querySelector('[name="fat"]').value,
+                turbidity: document.querySelector('[name="turbidity"]').value,
+                color: document.querySelector('[name="color"]').value
+            };
+            updateSummary(data);
+        });
+
+        document.getElementById("milk-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const ph = parseFloat(document.querySelector('[name="ph"]').value);
+            const temperature = parseFloat(document.querySelector('[name="temperature"]').value);
+            const taste = parseInt(document.querySelector('[name="taste"]').value, 10);
+            const odor = parseInt(document.querySelector('[name="odor"]').value, 10);
+            const fat = parseInt(document.querySelector('[name="fat"]').value, 10);
+            const turbidity = parseInt(document.querySelector('[name="turbidity"]').value, 10);
+            const color = parseInt(document.querySelector('[name="color"]').value, 10);
+
+            updateSummary({
+                ph,
+                temperature,
+                taste,
+                odor,
+                fat,
+                turbidity,
+                color
+            });
+
+            const data = {ph, temperature, taste, odor, fat, turbidity, color};
+
+            try {
+                const res = await fetch("/predict/milk", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.prediction) {
+                    document.getElementById("prediction-output").textContent = "Predicted Quality: " + result.prediction;
+                } else {
+                    document.getElementById("prediction-output").textContent = "Error: " + (result.error || "Unknown error");
+                }
+            } catch (err) {
+                document.getElementById("prediction-output").textContent = "Server error. Please try again.";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const data = {
+                ph: "",
+                temperature: "",
+                taste: "",
+                odor: "",
+                fat: "",
+                turbidity: "",
+                color: ""
+            };
+            updateSummary(data);
+        });
+    </script>
+</body>
+</html>

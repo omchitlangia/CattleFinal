@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Cattle Breed Recognition</title>
+<style>
+  body {
+    background-color: #f6f8f3;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    width: 450px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+    box-shadow: 0 2px 14px rgba(130,140,80,.08);
+  }
+  h2 {
+    text-align: center;
+    color: #303e1c;
+    margin-bottom: 25px;
+  }
+  input[type="file"] {
+    display: block;
+    margin: 20px auto 30px auto;
+  }
+  button {
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    background-color: #3e561a;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #result {
+    margin-top: 30px;
+    background-color: #ecf5e5;
+    padding: 18px;
+    border-radius: 7px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #3e561a;
+    min-height: 40px;
+    text-align: center;
+    word-break: break-word;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cattle Breed Recognition</h2>
+    <form id="cattle-form">
+      <input type="file" id="image-upload" name="file" accept="image/*" required />
+      <button type="submit">Predict Breed</button>
+    </form>
+    <div id="result">Upload an image of cattle and click Predict Breed.</div>
+  </div>
+  <script>
+    const form = document.getElementById('cattle-form');
+    const imageInput = document.getElementById('image-upload');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!imageInput.files.length) {
+        resultDiv.textContent = 'Please select an image file.';
+        return;
+      }
+
+      const file = imageInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      resultDiv.textContent = 'Predicting... Please wait.';
+
+      try {
+        const response = await fetch('/predict/cattle', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && !data.error) {
+          // Assuming your model returns label/index. Map to breed names if needed.
+          const classNames = [
+            "Breed 0", "Breed 1", "Breed 2", "Breed 3", "Breed 4",
+            "Breed 5", "Breed 6", "Breed 7", "Breed 8", "Breed 9"
+            // Replace these with actual breed names you have
+          ];
+
+          const breedName = classNames[data.predicted_class] || "Unknown Breed";
+          const confidencePercent = (data.confidence * 100).toFixed(2);
+
+          resultDiv.textContent = `Predicted Breed: ${breedName} (Confidence: ${confidencePercent}%)`;
+        } else {
+          resultDiv.textContent = `Prediction Error: ${data.error || 'Unknown error'}`;
+        }
+      } catch (err) {
+        resultDiv.textContent = 'Server error or network issue. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AgriSmart - AI Agriculture Assistant</title>
+<style>
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8faf7;
+    color: #1f3a16;
+    line-height: 1.56;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Navbar */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: saturate(180%) blur(10px);
+    background-color: #fafbf6cc;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.05);
+  }
+  .nav-container {
+    max-width: 1080px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+  }
+  .brand-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #2b572d;
+  }
+  .brand-subtext {
+    font-size: 0.775rem;
+    color: #6b8569;
+  }
+  .nav-links {
+    display: flex;
+    list-style-type: none;
+    gap: 22px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: #1f3a16;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 8px 6px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover {
+    color: #4caf50;
+  }
+  .nav-actions button {
+    font-weight: 600;
+    border-radius: 7px;
+    cursor: pointer;
+    padding: 8px 22px;
+    font-size: 1rem;
+    border: none;
+    margin-left: 12px;
+    transition: background-color 0.3s ease;
+  }
+  .btn-signin {
+    background: #fff;
+    color: #3f4b3b;
+    border: 1.5px solid #c7d2b8;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.06);
+  }
+  .btn-signin:hover {
+    background: #f0f9eb;
+  }
+  .btn-getstarted {
+    background: #2f6f1b;
+    color: #fff;
+    box-shadow: 0 4px 16px rgb(47 111 27 / 0.38);
+  }
+  .btn-getstarted:hover {
+    background: #2c6e1f;
+  }
+
+  /* Hero Section */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 550px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+    text-align: center;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(95deg, rgba(34,139,34,0.75) 20%, rgba(24,77,34,0.8) 83%);
+    z-index: 1;
+  }
+  .hero img {
+    position: absolute;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  .hero-content {
+    position: relative;
+    max-width: 700px;
+    padding: 60px 24px;
+    z-index: 2;
+    animation: fadeInUp 1.2s ease forwards;
+  }
+  .hero h1 {
+    font-weight: 900;
+    font-size: 3.8rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .hero h1 .highlight {
+    color: #febd55;
+  }
+  .hero p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #dbe9db;
+    margin-bottom: 36px;
+  }
+  .hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+  .btn-primary-hero {
+    background: #febd55;
+    border-radius: 7px;
+    color: #1f3a16;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 12px 36px;
+    cursor: pointer;
+    box-shadow: 0 2px 12px #7f52170d;
+    border: none;
+  }
+  .btn-primary-hero:hover {
+    background: #fdca72;
+  }
+  .btn-secondary-hero {
+    background: #fff;
+    color: #797979;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 30px;
+    border-radius: 7px;
+    border: none;
+    opacity: 0.5;
+    cursor: default;
+  }
+  .features-hero {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 52px;
+    font-size: 1.05rem;
+    color: #d9eddb;
+    filter: drop-shadow(0 1px 3px #0003);
+  }
+  .features-hero span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .features-hero img {
+    width: 22px;
+    height: 22px;
+    filter: brightness(85%);
+  }
+
+  /* Cards Section */
+  .section-container {
+    max-width: 1150px;
+    margin: 72px auto 96px auto;
+    padding: 0 22px;
+    text-align: center;
+  }
+  .section-title {
+    font-size: 2.7rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    color: #182615;
+  }
+  .section-subtitle {
+    color: #517651;
+    font-weight: 400;
+    font-size: 1.125rem;
+    margin-bottom: 48px;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 26px;
+  }
+  .card {
+    background: #f8faf7;
+    border-radius: 10px;
+    padding: 28px 22px;
+    border: 1px solid #dde7d9;
+    text-align: left;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+  }
+  .card-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    background-color: var(--icon-bg, #258235);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-icon {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+    color: #223722;
+  }
+  .card-description {
+    color: #5f7661;
+    font-size: 0.95rem;
+    font-weight: 400;
+    flex-grow: 1;
+  }
+  .card-upload-box {
+    border: 1.8px dashed #d4dbc8;
+    border-radius: 10px;
+    padding: 36px 16px;
+    margin-top: 26px;
+    text-align: center;
+    color: #8ea58c;
+    font-size: 0.91rem;
+    font-weight: 500;
+  }
+  .card-upload-box strong {
+    font-weight: 600;
+  }
+  .start-analysis-btn {
+    margin-top: 32px;
+    background-color: #2f6e1b;
+    border-radius: 10px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 18px 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  .start-analysis-btn:hover {
+    background-color: #215215;
+  }
+
+  /* Why Choose Section */
+  .why-choose-section {
+    background: #f8faf7;
+    padding: 48px 0 70px 0;
+  }
+  .why-choose-title {
+    font-weight: 900;
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    color: #1b321b;
+    text-align: center;
+  }
+  .why-choose-subtitle {
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: #4f7050;
+    text-align: center;
+    margin-bottom: 44px;
+  }
+  .features-cards {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+    gap: 36px;
+  }
+  .feature-card {
+    background: white;
+    border: 1.6px solid #e4efdf;
+    border-radius: 10px;
+    padding: 36px 28px 44px 28px;
+    text-align: center;
+    box-shadow: 0 1px 7px rgba(0,0,0,0.03);
+  }
+  .feature-icon-wrapper {
+    margin-bottom: 22px;
+  }
+  .feature-icon {
+    fill: #257322;
+    width: 36px; height: 36px;
+  }
+  .feature-title {
+    font-weight: 700;
+    font-size: 1.18rem;
+    margin-bottom: 10px;
+    color: #283a22;
+  }
+  .feature-description {
+    font-size: 0.95rem;
+    color: #597e5a;
+    font-weight: 400;
+  }
+
+  /* Footer */
+  footer {
+    background-color: #256823;
+    color: #d1e3ca;
+    padding: 56px 20px 24px 20px;
+  }
+  .footer-container {
+    max-width: 1080px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    justify-content: space-between;
+  }
+  .footer-column {
+    min-width: 160px;
+    max-width: 250px;
+  }
+  .footer-column h3 {
+    font-weight: 700;
+    font-size: 1.18rem;
+    margin-bottom: 18px;
+  }
+  .footer-column p, 
+  .footer-column a, 
+  .footer-column li {
+    font-size: 0.92rem;
+    margin-bottom: 12px;
+    color: #c1d9af;
+    text-decoration: none;
+    display: block;
+  }
+  .footer-column ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .footer-column a:hover {
+    color: #f5f8f1;
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .footer-brand-logo {
+    width: 34px;
+    height: 34px;
+  }
+  .footer-copy {
+    font-weight: 400;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 28px;
+    color: #cbd8bb;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 16px;
+    }
+    .nav-links {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+    }
+    .nav-actions {
+      justify-content: center;
+      width: 100%;
+    }
+    .hero-content h1 {
+      font-size: 2.6rem;
+    }
+    .cards-grid {
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 20px;
+    }
+    .features-cards {
+      grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    }
+    footer .footer-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="nav-container">
+    <a href="#" class="brand" aria-label="AgriSmart logo and brand">
+      <img src="https://img.icons8.com/ios/50/228B22/plant-under-sun--v1.png" alt="AgriSmart logo" class="brand-logo" />
+      <div>
+        <div class="brand-text">AgriSmart</div>
+        <div class="brand-subtext">AI Agriculture Assistant</div>
+      </div>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Analysis</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-signin" type="button">Sign In</button>
+      <button class="btn-getstarted" type="button">Get Started</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" role="banner" aria-label="Smart Agriculture AI Assistant hero banner">
+  <img src="hero-agriculture.jpg" alt="Wide green agricultural fields with buffaloes on hill in sunset" class="hero-bg" />
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1><span class="title-large">Smart Agriculture</span> <br /> <span class="title-highlight">AI Assistant</span></h1>
+    <p>
+      Revolutionize your farming with AI-powered insights. From <b>breed recognition</b> to <b>crop yield prediction</b>, get real-time actionable intelligence for better harvests.
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-primary-hero" type="button">Start Analysis →</button>
+      <button class="btn-secondary-hero" type="button" disabled>Learn More</button>
+    </div>
+    <div class="features-hero">
+      <span><img src="https://img.icons8.com/ios-filled/24/ffffff/camera--v1.png" alt="" aria-hidden="true" /> Image Recognition</span>
+      <span><img src="https://img.icons8.com/ios-filled/24/ffffff/artificial-intelligence.png" alt="" aria-hidden="true" /> AI-Powered Insights</span>
+      <span><img src="https://img.icons8.com/ios-filled/24/ffffff/combo-chart--v2.png" alt="" aria-hidden="true" /> Predictive Analytics</span>
+    </div>
+  </div>
+</section>
+
+<!-- AI-Powered Analysis Tools Section -->
+<section class="section-container" aria-labelledby="tools-title">
+  <h2 id="tools-title" class="section-title">AI-Powered Analysis Tools</h2>
+  <p class="section-subtitle">
+    Choose from our comprehensive suite of agricultural AI tools to optimize your farming operations
+  </p>
+  <div class="cards-grid">
+
+    <article class="card" role="region" aria-labelledby="breed-title">
+      <div class="card-icon-wrapper" style="--icon-bg:#2f6e1b;">
+        <img src="https://img.icons8.com/ios-filled/24/ffffff/steak.png" alt="" aria-hidden="true" />
+      </div>
+      <h3 id="breed-title" class="card-title">Breed Recognition</h3>
+      <p class="card-description">Identify cattle and buffalo breeds from uploaded images with advanced AI recognition.</p>
+      <div class="card-upload-box" tabindex="0" role="button" aria-label="Upload image for breed recognition">
+        Drop your image here or <strong>browse files</strong>
+      </div>
+      <button class="start-analysis-btn" type="button" aria-describedby="breed-title">Start Analysis →</button>
+    </article>
+
+    <article class="card" role="region" aria-labelledby="milk-quality-title">
+      <div class="card-icon-wrapper" style="--icon-bg:#fb9e0c;">
+        <img src="https://img.icons8.com/ios-filled/24/ffffff/droplet.png" alt="" aria-hidden="true" />
+      </div>
+      <h3 id="milk-quality-title" class="card-title">Milk Quality Prediction</h3>
+      <p class="card-description">Predict milk quality parameters including fat content, protein levels, and adulteration risks.</p>
+      <div class="card-upload-box" tabindex="0" role="button" aria-label="Upload image for milk quality prediction">
+        Drop your image here or <strong>browse files</strong>
+      </div>
+      <button class="start-analysis-btn" type="button" aria-describedby="milk-quality-title">Start Analysis →</button>
+    </article>
+
+    <article class="card" role="region" aria-labelledby="buffalo-cow-title">
+      <div class="card-icon-wrapper" style="--icon-bg:#3182ce;">
+        <img src="https://img.icons8.com/ios-filled/24/ffffff/camera.png" alt="" aria-hidden="true" />
+      </div>
+      <h3 id="buffalo-cow-title" class="card-title">Buffalo vs Cow Recognition</h3>
+      <p class="card-description">Accurately distinguish between buffalo and cow in uploaded photographs.</p>
+      <div class="card-upload-box" tabindex="0" role="button" aria-label="Upload image for buffalo vs cow recognition">
+        Drop your image here or <strong>browse files</strong>
+      </div>
+      <button class="start-analysis-btn" type="button" aria-describedby="buffalo-cow-title"
+  onclick="window.location.href='milk-quality.html'">
+  Start Analysis →
+</button>
+
+
+  </div>
+</section>
+
+<!-- Why Choose Section -->
+<section class="why-choose-section" aria-labelledby="why-choose-title">
+  <h2 id="why-choose-title" class="why-choose-title">Why Choose Our Platform?</h2>
+  <p class="why-choose-subtitle">Built specifically for farmers, by agricultural technology experts</p>
+  <div class="features-cards">
+
+    <article class="feature-card" role="region" aria-label="Accurate AI Recognition">
+      <div class="feature-icon-wrapper">
+        <img src="https://img.icons8.com/ios-filled/36/257322/shield.png" alt="" aria-hidden="true" class="feature-icon"/>
+      </div>
+      <h3 class="feature-title">Accurate AI Recognition</h3>
+      <p class="feature-description">State-of-the-art computer vision models trained on extensive agricultural datasets for precise identification and analysis.</p>
+    </article>
+
+    <article class="feature-card" role="region" aria-label="Real-Time Results">
+      <div class="feature-icon-wrapper">
+        <img src="https://img.icons8.com/ios-filled/36/257322/flash-on.png" alt="" class="feature-icon" aria-hidden="true" />
+      </div>
+      <h3 class="feature-title">Real-Time Results</h3>
+      <p class="feature-description">Get instant insights and actionable recommendations within seconds of uploading your images.</p>
+    </article>
+
+    <article class="feature-card" role="region" aria-label="Predictive Analytics">
+      <div class="feature-icon-wrapper">
+        <img src="https://img.icons8.com/ios-filled/36/257322/sorting-blog.png" alt="" class="feature-icon" aria-hidden="true" />
+      </div>
+      <h3 class="feature-title">Predictive Analytics</h3>
+      <p class="feature-description">Advanced machine learning algorithms predict outcomes and help you make informed decisions before problems arise.</p>
+    </article>
+
+    <article class="feature-card" role="region" aria-label="Mobile Friendly Design">
+      <div class="feature-icon-wrapper">
+        <img src="https://img.icons8.com/ios-filled/36/257322/smartphone-tablet.png" alt="" class="feature-icon" aria-hidden="true" />
+      </div>
+      <h3 class="feature-title">Mobile-Friendly</h3>
+      <p class="feature-description">Access all features from any device, whether you're in the field or the office. Designed for farmers on the go.</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-container" role="contentinfo">
+    <div class="footer-column" aria-label="Company information">
+      <div class="footer-brand">
+        <img src="https://img.icons8.com/ios/50/fff/plant-under-sun--v1.png" alt="AgriSmart logo" class="footer-brand-logo" />
+        <span>AgriSmart <br /><small>AI Agriculture Assistant</small></span>
+      </div>
+      <p>
+        Revolutionizing agriculture with artificial intelligence for better farming decisions and higher yields.
+      </p>
+    </div>
+    <div class="footer-column" aria-label="Services">
+      <h3>Services</h3>
+      <a href="#">Breed Recognition</a>
+      <a href="#">Milk Quality Analysis</a>
+      <a href="#">Crop Yield Prediction</a>
+      <a href="#">Pest Identification</a>
+    </div>
+    <div class="footer-column" aria-label="Support">
+      <h3>Support</h3>
+      <a href="#">Help Center</a>
+      <a href="#">Documentation</a>
+      <a href="#">API Reference</a>
+      <a href="#">Community</a>
+    </div>
+    <div class="footer-column" aria-label="Contact">
+      <h3>Contact</h3>
+      <p>✉️ support@agrismart.ai</p>
+      <p>📞 +1 (555) 123-4567</p>
+      <p>📍 Agricultural Innovation Center</p>
+    </div>
+  </div>
+  <p class="footer-copy">
+    &copy; 2024 AgriSmart. All rights reserved. Empowering farmers with AI technology.
+  </p>
+</footer>
+
+</body>
+</html>
